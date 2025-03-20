@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Pergola Configurator</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./app.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
-    <div class="d-flex flex-wrap">
-        <form id="pergolaForm" class="col-12 col-md-6">
+    <form id="pergolaForm">
+        <div class="form-row">
             <div class="form-group">
                 <label for="model">Pergola Model:</label>
                 <select id="model" name="model" class="form-control" required>
@@ -48,6 +49,12 @@
             </div>
 
             <div class="form-group">
+                <label for="post">Post:</label>
+                <select id="post" name="post" class="form-control"></select>
+            </div>
+
+
+            <div class="form-group">
                 <label for="vinyl_shade_level">Vinyl Shade Level:</label>
                 <select id="vinyl_shade_level" name="vinyl_shade_level" class="form-control"></select>
             </div>
@@ -55,6 +62,16 @@
             <div class="form-group">
                 <label for="polycarbonate_sheet_color">Polycarbonate Sheet Color:</label>
                 <select id="polycarbonate_sheet_color" name="polycarbonate_sheet_color" class="form-control"></select>
+            </div>
+
+            <div class="form-group" id="cap_style_container">
+                <label for="cap_style">Cap Style:</label>
+                <select id="cap_style" name="cap_style" class="form-control"></select>
+            </div>
+
+            <div class="form-group" id="fan_mount_container">
+                <label for="fan_mount">Fan Mount:</label>
+                <select id="fan_mount" name="fan_mount" class="form-control"></select>
             </div>
 
             <div class="form-group">
@@ -66,71 +83,71 @@
                 <label for="beam_attach_brkts">Beam Attach Brackets:</label>
                 <select id="beam_attach_brkts" name="beam_attach_brkts" class="form-control"></select>
             </div>
-
-            <button type="submit" class="btn btn-primary">Get Price</button>
-        </form>
-
-        <div class="col-12 col-md-6">
-            <table class="table table-hover table-striped" style="min-height: 400px; overflow-y: auto;">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Category</th>
-                        <th scope="col">Actual List Price</th>
-                        <th scope="col">Actual Unit Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Reinforcement</td>
-                        <td id="reinforcement_list_price" class="text-right"></td>
-                        <td id="reinforcement_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Posts</td>
-                        <td id="posts_list_price" class="text-right"></td>
-                        <td id="posts_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Columns</td>
-                        <td id="columns_list_price" class="text-right"></td>
-                        <td id="columns_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Roof</td>
-                        <td id="roof_list_price" class="text-right"></td>
-                        <td id="roof_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Trim/Fasteners</td>
-                        <td id="trim_fasteners_list_price" class="text-right"></td>
-                        <td id="trim_fasteners_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Caps/Accessories</td>
-                        <td id="caps_accessories_list_price" class="text-right"></td>
-                        <td id="caps_accessories_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr class="font-weight-bold">
-                        <td>Subtotal</td>
-                        <td id="subtotal_list_price" class="text-right"></td>
-                        <td id="subtotal_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr>
-                        <td>Tax (7%)</td>
-                        <td id="tax_list_price" class="text-right"></td>
-                        <td id="tax_unit_price" class="text-right"></td>
-                    </tr>
-                    <tr class="font-weight-bold">
-                        <td>Grand Total</td>
-                        <td id="grand_total_list_price" class="text-right"></td>
-                        <td id="grand_total_unit_price" class="text-right"></td>
-                    </tr>
-                </tbody>
-            </table>
         </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Get Price</button>
+        </div>
+    </form>
+
+    <div class="table-container">
+        <table class="table table-hover table-striped" style="min-height: 400px; overflow-y: auto;">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Category</th>
+                <th scope="col">Actual List Price</th>
+                <th scope="col">Actual Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Reinforcement</td>
+                <td id="reinforcement_list_price" class="text-right"></td>
+                <td id="reinforcement_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Posts</td>
+                <td id="posts_list_price" class="text-right"></td>
+                <td id="posts_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Columns</td>
+                <td id="columns_list_price" class="text-right"></td>
+                <td id="columns_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Roof</td>
+                <td id="roof_list_price" class="text-right"></td>
+                <td id="roof_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Trim/Fasteners</td>
+                <td id="trim_fasteners_list_price" class="text-right"></td>
+                <td id="trim_fasteners_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Caps/Accessories</td>
+                <td id="caps_accessories_list_price" class="text-right"></td>
+                <td id="caps_accessories_unit_price" class="text-right"></td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td>Subtotal</td>
+                <td id="subtotal_list_price" class="text-right"></td>
+                <td id="subtotal_unit_price" class="text-right"></td>
+            </tr>
+            <tr>
+                <td>Tax (7%)</td>
+                <td id="tax_list_price" class="text-right"></td>
+                <td id="tax_unit_price" class="text-right"></td>
+            </tr>
+            <tr class="font-weight-bold">
+                <td>Grand Total</td>
+                <td id="grand_total_list_price" class="text-right"></td>
+                <td id="grand_total_unit_price" class="text-right"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
