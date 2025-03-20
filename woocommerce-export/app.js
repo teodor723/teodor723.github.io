@@ -27,8 +27,8 @@ const variations = {
         ],
     },
     vinyl_shade_level: {
-        Traditional: ["90%", "75%", "50%"],
-        Modern: ["90%", "75%", "50%", "Rafters Only"],
+        Traditional: ["90% Shade", "75% Shade", "50% Shade"],
+        Modern: ["90% Shade", "75% Shade", "50% Shade", "Rafters Only"],
         Elements: ["N/A on this model"],
     },
     cap_style: {
@@ -38,95 +38,156 @@ const variations = {
     }
 };
 
-const modelMap = {"Modern": "MOD", "Traditional": "TRA", "Elements": "ELE"};
+const modelMap = { "Modern": "MOD", "Traditional": "TRA", "Elements": "ELE" };
 
 function populateCheckboxes(id, values) {
     const container = $(`#${id}`);
     container.empty();
-    values.forEach(value => {
+
+    if (values.includes("N/A on this model")) {
         container.append(`
-            <input type="checkbox" name="${id}" value="${value.replace("'", "")}" checked> ${value}
+            <input type="checkbox" name="${id}" value="N/A on this model" disabled> N/A on this model
         `);
-    });
+    } else {
+        values.forEach(value => {
+            container.append(`
+                <input type="checkbox" name="${id}" value="${value}" checked> ${value}
+            `);
+        });
+    }
 }
 
 function populateOptions(model) {
     populateCheckboxes('depth-options', variations.depth[model]);
     populateCheckboxes('width-options', variations.width[model]);
     populateCheckboxes('post-options', variations.post[model]);
-    populateCheckboxes('vinyl-shade-level-options', variations.vinyl_shade_level[model]);
-    populateCheckboxes('cap-style-options', variations.cap_style[model]);
+
+    if (variations.vinyl_shade_level[model].includes("N/A on this model")) {
+        $('#vinyl-shade-level-options').html('<input type="checkbox" disabled checked> N/A on this model');
+    } else {
+        populateCheckboxes('vinyl-shade-level-options', variations.vinyl_shade_level[model]);
+    }
+
+    if (variations.cap_style[model].includes("N/A on this model")) {
+        $('#cap-style-options').html('<input type="checkbox" disabled checked> N/A on this model');
+    } else {
+        populateCheckboxes('cap-style-options', variations.cap_style[model]);
+    }
 }
 
-
 function generateCSV() {
-    const model = $("input[name='model']:checked").val();
-    const attachedTypes = $("input[name='attached_type']:checked").map((_, el) => el.value).get();
-    const depths = $("input[name='depth-options']:checked").map((_, el) => el.value).get();
-    const widths = $("input[name='width-options']:checked").map((_, el) => el.value).get();
+    const generateBtn = $("#generateCsv");
 
-    // Full color for name, shorthand for SKU/slug
-    const colors = $("input[name='color']:checked").map((_, el) => ({
-        full: el.value,
-        short: el.value[0].toUpperCase()
-    })).get();
+    // Disable the button and add loader
+    generateBtn.prop("disabled", true);
+    generateBtn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Generating...');
 
-    const fanMounts = $("input[name='fan_mount']:checked").map((_, el) => {
-        switch (el.value) {
-            case 'No':
-                return 'NF';
-            case '1':
-                return 'F1';
-            case '2':
-                return 'F2';
-            case '3':
-                return 'F3';
-            default:
-                return '';
-        }
-    }).get();
+    setTimeout(() => {
+        const model = $("input[name='model']:checked").val();
+        const attachedTypes = $("input[name='attached_type']:checked").map((_, el) => el.value).get();
+        const depths = $("input[name='depth-options']:checked").map((_, el) => el.value).get();
+        const widths = $("input[name='width-options']:checked").map((_, el) => el.value).get();
+        const posts = $("input[name='post-options']:checked").map((_, el) => el.value).get();
 
-    let csvContent = "type,sku,name,slug,parent,status,featured,catalog_visibility\n";
-    csvContent += `variable,PERG-${modelMap[model]},${model} Pergola Kit | Premium Outdoor Living Space,${model.toLowerCase()}-pergola,,1,0,visible\n`;
+        const shadeLevels = variations.vinyl_shade_level[model].includes("N/A on this model")
+            ? [null]
+            : $("input[name='vinyl-shade-level-options']:checked").map((_, el) => el.value).get();
 
-    attachedTypes.forEach(attachedType => {
-        const attachedTypeCode = attachedType === 'Attached' ? 'A' : 'F';
-        depths.forEach(depth => {
-            widths.forEach(width => {
-                colors.forEach(color => {
-                    fanMounts.forEach(fanMount => {
-                        // Full color for name, short form for slug and SKU
-                        const name = `${depth}' x ${width}' ${model} ${attachedType} Pergola - ${color.full} with ${fanMount === 'NF' ? 'No' : fanMount.replace('F', '')} Mount`;
-                        const slug = `${model.toLowerCase()}-${attachedType.toLowerCase()}-pergola-${depth}x${width}-${color.short.toLowerCase()}-${fanMount.toLowerCase()}`;
-                        const sku = `PERG-${modelMap[model]}-${attachedTypeCode}-${depth}X${width}-${color.short}-${fanMount}`;
+        const capStyles = variations.cap_style[model].includes("N/A on this model")
+            ? [null]
+            : $("input[name='cap-style-options']:checked").map((_, el) => el.value).get();
 
-                        csvContent += `variation,${sku},${name},${slug},${model},1,0,visible\n`;
+        const colors = $("input[name='color']:checked").map((_, el) => ({
+            full: el.value,
+            short: el.value[0].toUpperCase()
+        })).get();
+
+        const fanMounts = $("input[name='fan_mount']:checked").map((_, el) => {
+            switch (el.value) {
+                case 'No': return 'No Fan Mounts';
+                case '1': return '1 Fan Mount';
+                case '2': return '2 Fan Mounts';
+                case '3': return '3 Fan Mounts';
+                default: return '';
+            }
+        }).get();
+
+        let csvContent = "type,sku,name,slug,parent,status,featured,catalog_visibility\n";
+        csvContent += `variable,PERG-${modelMap[model]},${model} Pergola Kit | Premium Outdoor Living Space,${model.toLowerCase()}-pergola,,1,0,visible\n`;
+
+        attachedTypes.forEach(attachedType => {
+            const attachedTypeCode = attachedType === 'Attached' ? 'A' : 'F';
+
+            depths.forEach(depth => {
+                widths.forEach(width => {
+                    colors.forEach(color => {
+                        fanMounts.forEach(fanMount => {
+                            posts.forEach(post => {
+                                shadeLevels.forEach(shadeLevel => {
+                                    capStyles.forEach(capStyle => {
+                                        const nameParts = [
+                                            `${depth} x ${width} ${model} ${attachedType} Pergola`,
+                                            color.full,
+                                            fanMount,
+                                            post,
+                                            shadeLevel || "",
+                                            capStyle || ""
+                                        ].filter(Boolean).join(' - ');
+
+                                        const cleanDepth = depth.replace(/'/g, "");
+                                        const cleanWidth = width.replace(/'/g, "");
+                                        const cleanPost = post.replace(/'/g, "");
+
+                                        const slugParts = [
+                                            `${model.toLowerCase()}-${attachedType.toLowerCase()}-pergola`,
+                                            `${cleanDepth}x${cleanWidth}`,
+                                            color.short.toLowerCase(),
+                                            fanMount.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(),
+                                            cleanPost.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(),
+                                            shadeLevel ? shadeLevel.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : '',
+                                            capStyle ? capStyle.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() : ''
+                                        ].filter(Boolean).join('-');
+
+                                        const skuParts = [
+                                            `PERG-${modelMap[model]}`,
+                                            attachedTypeCode,
+                                            `${cleanDepth}X${cleanWidth}`,
+                                            color.short,
+                                            fanMount.replace(/[^a-zA-Z0-9]/g, ''),
+                                            cleanPost.replace(/[^a-zA-Z0-9]/g, ''),
+                                            shadeLevel ? shadeLevel.replace(/[^a-zA-Z0-9]/g, '') : '',
+                                            capStyle ? capStyle.replace(/[^a-zA-Z0-9]/g, '') : ''
+                                        ].filter(Boolean).join('-');
+
+                                        csvContent += `variation,${skuParts},${nameParts},${slugParts},${model},1,0,visible\n`;
+                                    });
+                                });
+                            });
+                        });
                     });
                 });
             });
         });
-    });
 
-    // Generate CSV file for download
-    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.setAttribute('download', `${model}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `${model}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // ✅ Re-enable button and remove loader after generation
+        generateBtn.prop("disabled", false);
+        generateBtn.html('Generate CSV');
+    }, 500); // Delay to simulate loading state (optional)
 }
 
 $(document).ready(() => {
-    // Load initial values
     populateOptions("Traditional");
-
-    // Change handlers
     $("input[name='model']").on("change", function () {
-        const model = $(this).val();
-        populateOptions(model);
+        populateOptions($(this).val());
     });
-
-    // Generate CSV on button click
     $("#generateCsv").on("click", generateCSV);
 });
+

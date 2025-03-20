@@ -3,97 +3,135 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Pergola Configurator</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>WooCommerce CSV Export</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="./app.css" rel="stylesheet">
 </head>
 <body>
-<div class="container mt-5">
-    <form id="pergolaForm">
-        <!-- MODEL -->
-        <div class="form-group">
-            <label>Model:</label>
-            <div>
-                <input type="radio" id="model_traditional" name="model" value="Traditional" checked>
-                <label for="model_traditional">Traditional</label>
 
-                <input type="radio" id="model_modern" name="model" value="Modern">
-                <label for="model_modern">Modern</label>
+<div class="container">
+    <div class="form-container">
+        <h2>WooCommerce CSV Export</h2>
+        <form id="pergolaForm">
 
-                <input type="radio" id="model_elements" name="model" value="Elements">
-                <label for="model_elements">Elements</label>
+            <!-- Model -->
+            <div class="form-group">
+                <label>Model:</label>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div class="d-flex align-items-center">
+                        <input type="radio" id="model_traditional" name="model" value="Traditional" checked>
+                        <label for="model_traditional" class="ms-2 mb-0">Traditional</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="radio" id="model_modern" name="model" value="Modern">
+                        <label for="model_modern" class="ms-2 mb-0">Modern</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="radio" id="model_elements" name="model" value="Elements">
+                        <label for="model_elements" class="ms-2 mb-0">Elements</label>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- SPACE TYPE -->
-        <div class="form-group">
-            <label>Space Type:</label>
-            <div>
-                <input type="checkbox" name="attached_type" value="Attached" checked> Attached
-                <input type="checkbox" name="attached_type" value="Freestanding" checked> Freestanding
+            <!-- Space Type -->
+            <div class="form-group">
+                <label>Space Type:</label>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="attached_type" value="Attached" checked>
+                        <label class="ms-2 mb-0">Attached</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="attached_type" value="Freestanding" checked>
+                        <label class="ms-2 mb-0">Freestanding</label>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- DEPTH -->
-        <div class="form-group">
-            <label>Depth:</label>
-            <div id="depth-options"></div>
-        </div>
-
-        <!-- WIDTH -->
-        <div class="form-group">
-            <label>Width:</label>
-            <div id="width-options"></div>
-        </div>
-
-        <!-- COLOR -->
-        <div class="form-group">
-            <label>Color:</label>
-            <div>
-                <input type="checkbox" name="color" value="White" checked> White
-                <input type="checkbox" name="color" value="Tan" checked> Tan
-                <input type="checkbox" name="color" value="Black" checked> Black
+            <!-- Depth -->
+            <div class="form-group">
+                <label>Depth:</label>
+                <div id="depth-options" class="d-flex gap-2 flex-wrap"></div>
             </div>
-        </div>
 
-
-        <!-- POST -->
-        <div class="form-group">
-            <label>Post:</label>
-            <div id="post-options"></div>
-        </div>
-
-        <!-- Vinyl Shade Level -->
-        <div class="form-group">
-            <label>Vinyl Shade Level:</label>
-            <div id="vinyl-shade-level-options"></div>
-        </div>
-
-        <!-- FAN MOUNT -->
-        <div class="form-group">
-            <label>Fan Mount:</label>
-            <div>
-                <input type="checkbox" name="fan_mount" value="No" checked> No
-                <input type="checkbox" name="fan_mount" value="1" checked> 1
-                <input type="checkbox" name="fan_mount" value="2" checked> 2
-                <input type="checkbox" name="fan_mount" value="3" checked> 3
+            <!-- Width -->
+            <div class="form-group">
+                <label>Width:</label>
+                <div id="width-options" class="d-flex gap-2 flex-wrap"></div>
             </div>
-        </div>
 
+            <!-- Color -->
+            <div class="form-group">
+                <label>Color:</label>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="color" value="White" checked>
+                        <label class="ms-2 mb-0">White</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="color" value="Tan" checked>
+                        <label class="ms-2 mb-0">Tan</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="color" value="Black" checked>
+                        <label class="ms-2 mb-0">Black</label>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Cap Style -->
-        <div class="form-group">
-            <label>Cap Style:</label>
-            <div id="cap-style-options"></div>
-        </div>
+            <!-- Post -->
+            <div class="form-group">
+                <label>Post:</label>
+                <div id="post-options" class="d-flex gap-2 flex-wrap"></div>
+            </div>
 
-        <div class="text-center mt-4">
-            <button type="button" id="generateCsv" class="btn btn-success">Generate CSV</button>
-        </div>
-    </form>
+            <!-- Vinyl Shade Level -->
+            <div class="form-group">
+                <label>Vinyl Shade Level:</label>
+                <div id="vinyl-shade-level-options" class="d-flex gap-2 flex-wrap"></div>
+            </div>
+
+            <!-- Fan Mount -->
+            <div class="form-group">
+                <label>Fan Mount:</label>
+                <div class="d-flex gap-3 flex-wrap">
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="fan_mount" value="No" checked>
+                        <label class="ms-2 mb-0">No Fan Mounts</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="fan_mount" value="1" checked>
+                        <label class="ms-2 mb-0">1 Fan Mount</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="fan_mount" value="2" checked>
+                        <label class="ms-2 mb-0">2 Fan Mounts</label>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <input type="checkbox" name="fan_mount" value="3" checked>
+                        <label class="ms-2 mb-0">3 Fan Mounts</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cap Style -->
+            <div class="form-group">
+                <label>Cap Style:</label>
+                <div id="cap-style-options" class="d-flex gap-2 flex-wrap"></div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="button" id="generateCsv" class="btn btn-primary">
+                    Generate CSV
+                </button>
+            </div>
+
+        </form>
+    </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="./app.js"></script>
 </body>
 </html>
