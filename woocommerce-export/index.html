@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Pergola Configurator</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./app.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <form id="pergolaForm">
+        <!-- MODEL -->
+        <div class="form-group">
+            <label>Model:</label>
+            <div>
+                <input type="radio" id="model_traditional" name="model" value="Traditional" checked>
+                <label for="model_traditional">Traditional</label>
+
+                <input type="radio" id="model_modern" name="model" value="Modern">
+                <label for="model_modern">Modern</label>
+
+                <input type="radio" id="model_elements" name="model" value="Elements">
+                <label for="model_elements">Elements</label>
+            </div>
+        </div>
+
+        <!-- SPACE TYPE -->
+        <div class="form-group">
+            <label>Space Type:</label>
+            <div>
+                <input type="checkbox" name="attached_type" value="Attached" checked> Attached
+                <input type="checkbox" name="attached_type" value="Freestanding" checked> Freestanding
+            </div>
+        </div>
+
+        <!-- DEPTH -->
+        <div class="form-group">
+            <label>Depth:</label>
+            <div id="depth-options"></div>
+        </div>
+
+        <!-- WIDTH -->
+        <div class="form-group">
+            <label>Width:</label>
+            <div id="width-options"></div>
+        </div>
+
+        <!-- COLOR -->
+        <div class="form-group">
+            <label>Color:</label>
+            <div>
+                <input type="checkbox" name="color" value="White" checked> White
+                <input type="checkbox" name="color" value="Tan" checked> Tan
+                <input type="checkbox" name="color" value="Black" checked> Black
+            </div>
+        </div>
+
+        <!-- FAN MOUNT -->
+        <div class="form-group">
+            <label>Fan Mount:</label>
+            <div>
+                <input type="checkbox" name="fan_mount" value="No" checked> No
+                <input type="checkbox" name="fan_mount" value="1" checked> 1
+                <input type="checkbox" name="fan_mount" value="2" checked> 2
+                <input type="checkbox" name="fan_mount" value="3" checked> 3
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <button type="button" id="generateCsv" class="btn btn-success">Generate CSV</button>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
