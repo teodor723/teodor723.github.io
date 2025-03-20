@@ -13,21 +13,21 @@ const variations = {
     vinyl_shade_level: {
         Traditional: ["90%", "75%", "50%"],
         Modern: ["90%", "75%", "50%", "Rafters Only"],
-        Elements: [],
+        Elements: ["N/A on this model"],
     },
     polycarbonate_sheet_color: {
-        Traditional: [],
-        Modern: [],
+        Traditional: ["N/A on this model"],
+        Modern: ["N/A on this model"],
         Elements: ["Glacier White", "Sunset Bronze"],
     },
     hurricane_clips: {
         Traditional: ["No", "Yes"],
-        Modern: [],
+        Modern: ["N/A on this model"],
         Elements: ["No", "Yes"],
     },
     beam_attach_brkts: {
         Traditional: ["No", "Yes"],
-        Modern: [],
+        Modern: ["N/A on this model"],
         Elements: ["No", "Yes"],
     },
 };
@@ -82,7 +82,11 @@ const capStyleVariations = {
         Tan: ["Standard Cap (Scroll)", "Flat Cap", "Bevel Cap"],
         Black: ["Standard Cap (Scroll)", "Flat Cap"]
     },
-    Modern: "N/A on this model",
+    Modern: {
+        White: ["N/A on this model"],
+        Tan: ["N/A on this model"],
+        Black: ["N/A on this model"],
+    },
     Elements: {
         White: ["Standard Cap (Scroll)", "Flat Cap", "Bevel Cap"],
         Tan: ["Standard Cap (Scroll)", "Flat Cap", "Bevel Cap"],
@@ -93,87 +97,35 @@ const capStyleVariations = {
 const fanMountOptions = {
     White: ["No", "1", "2", "3"],
     Tan: ["No", "1", "2", "3"],
-    Black: "N/A on this model"
+    Black: ["N/A on this model"],
 };
 
 
+function populateSelect(select, options) {
+    select.empty();
+
+    options.forEach(option => select.append(new Option(option, option)));
+
+    // Cross solution for all selects
+    select.prop('disabled', options.length === 1 && options[0] === "N/A on this model");
+}
+
 function populateOptions(model) {
     Object.keys(variations).forEach((key) => {
-        const container = $(`#${key}`).closest('.form-group');
-        const select = $(`#${key}`);
-        select.empty(); // Clear previous options
-
-        const options = variations[key][model];
-        if (options && options.length) {
-            container.show(); // Show container (label + select) if options available
-            options.forEach((option) => {
-                select.append(new Option(option, option));
-            });
-        } else {
-            container.hide(); // Hide container if no options available
-        }
+        populateSelect($(`#${key}`), variations[key][model]);
     });
 }
 
-
 function populatePostOptions(model, color) {
-    const select = $("#post");
-    select.empty(); // Clear previous options
-
-    if (postsVariations[model] && postsVariations[model][color]) {
-        const options = postsVariations[model][color];
-        if (options.length > 0) {
-            // Limit to the first matching value (like ARRAY_CONSTRAIN)
-            select.append(new Option(options[0], options[0]));
-            select.closest('.form-group').show(); // Show the dropdown
-        } else {
-            select.closest('.form-group').hide(); // Hide if no options available
-        }
-    } else {
-        select.closest('.form-group').hide(); // Hide if no options available
-    }
+    populateSelect($("#post"), postsVariations[model][color]);
 }
 
 function populateCapStyleOptions(model, color) {
-    const container = $("#cap_style_container");
-    const select = $("#cap_style");
-    select.empty(); // Clear previous options
-
-    if (capStyleVariations[model] === "N/A on this model") {
-        container.hide(); // Hide the field if "N/A on this model"
-    } else if (capStyleVariations[model] && capStyleVariations[model][color]) {
-        const options = capStyleVariations[model][color];
-
-        // Limit to the first 3 options (like ARRAY_CONSTRAIN)
-        options.slice(0, 3).forEach(option => {
-            select.append(new Option(option, option));
-        });
-
-        container.show(); // Show the dropdown
-    } else {
-        container.hide(); // Hide if no options available
-    }
+    populateSelect($("#cap_style"), capStyleVariations[model][color]);
 }
 
 function populateFanMountOptions(color) {
-    const container = $("#fan_mount_container");
-    const select = $("#fan_mount");
-    select.empty(); // Clear previous options
-
-    if (fanMountOptions[color] === "N/A on this model") {
-        container.hide(); // Hide the field if "N/A on this model"
-    } else if (fanMountOptions[color]) {
-        const options = fanMountOptions[color];
-
-        // Limit to the first 4 options (like ARRAY_CONSTRAIN)
-        options.slice(0, 4).forEach(option => {
-            select.append(new Option(option, option));
-        });
-
-        container.show(); // Show the dropdown
-    } else {
-        container.hide(); // Hide if no options available
-    }
+    populateSelect($("#fan_mount"), fanMountOptions[color]);
 }
 
 $(document).ready(() => {
@@ -199,7 +151,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         const params = $("#pergolaForm")
-            .find("select:visible, input:visible")
+            .find("select:enabled, input:enabled")
             .serialize();
 
         console.log("Submitted params:", params);
@@ -207,12 +159,18 @@ $(document).ready(() => {
     });
 });
 
-
-
+// Create overlay and loader (centered in viewport)
+const loader = $('<div class="loader-overlay"><div class="spinner-border text-primary" role="status"></div></div>');
+const content = $(".container"); // Target only the content to blur
 
 const fetchPricingSummary = async (params) => {
-    const button = $("#pergolaForm button[type='submit']");
-    button.prop('disabled', true).html('Loading... <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    // Blur the content
+    content.css({
+        'filter': 'blur(4px)',
+        'pointer-events': 'none'
+    });
+
+    $('body').append(loader);
 
     try {
         const response = await fetch(`https://script.google.com/macros/s/${GOOGLE_SCRIPT_ID}/exec?${params}`);
@@ -226,7 +184,12 @@ const fetchPricingSummary = async (params) => {
             }).format(result[key]);
             $(`#${key}`).html(formattedValue);
         });
-        button.prop('disabled', false).html('Get Price'); // Re-enable button
+        // Remove blur and loader
+        content.css({
+            'filter': 'none',
+            'pointer-events': 'auto'
+        });
+        loader.remove();
     } catch (err) {
         console.log("Error:", err);
         // Optionally retry or handle error here
