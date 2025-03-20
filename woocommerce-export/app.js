@@ -9,9 +9,36 @@ const variations = {
         Modern: ["10'", "12'", "14'", "16'"],
         Elements: ["10'", "12'", "14'", "16'", "20'", "24'", "28'", "32'"],
     },
+    post: {
+        Traditional: [
+            "5in Sqr Post w trim ring x 10'",
+            "5in Sqr Post x 10'",
+            "7in Sqr Column x 10'",
+            "10in Round Column x 10'"
+        ],
+        Modern: [
+            "7in Sqr Column x 10'",
+            "7in Sqr Column x 10' w/ trim ring",
+            "8in Sqr Column x 10'",
+            "8in Sqr Column x 10' w/ trim ring",
+        ],
+        Elements: [
+            "5in Sqr Post x 10'"
+        ],
+    },
+    vinyl_shade_level: {
+        Traditional: ["90%", "75%", "50%"],
+        Modern: ["90%", "75%", "50%", "Rafters Only"],
+        Elements: ["N/A on this model"],
+    },
+    cap_style: {
+        Traditional: ["Standard Cap (Scroll)", "Flat Cap", "Bevel Cap"],
+        Modern: ["N/A on this model"],
+        Elements: ["Standard Cap (Scroll)", "Flat Cap", "Bevel Cap"],
+    }
 };
 
-const modelMap = { "Modern": "MOD", "Traditional": "TRA", "Elements": "ELE" };
+const modelMap = {"Modern": "MOD", "Traditional": "TRA", "Elements": "ELE"};
 
 function populateCheckboxes(id, values) {
     const container = $(`#${id}`);
@@ -26,6 +53,9 @@ function populateCheckboxes(id, values) {
 function populateOptions(model) {
     populateCheckboxes('depth-options', variations.depth[model]);
     populateCheckboxes('width-options', variations.width[model]);
+    populateCheckboxes('post-options', variations.post[model]);
+    populateCheckboxes('vinyl-shade-level-options', variations.vinyl_shade_level[model]);
+    populateCheckboxes('cap-style-options', variations.cap_style[model]);
 }
 
 
@@ -43,16 +73,21 @@ function generateCSV() {
 
     const fanMounts = $("input[name='fan_mount']:checked").map((_, el) => {
         switch (el.value) {
-            case 'No': return 'NF';
-            case '1': return 'F1';
-            case '2': return 'F2';
-            case '3': return 'F3';
-            default: return '';
+            case 'No':
+                return 'NF';
+            case '1':
+                return 'F1';
+            case '2':
+                return 'F2';
+            case '3':
+                return 'F3';
+            default:
+                return '';
         }
     }).get();
 
-    let csvContent = "type,sku,name,slug,status,featured,catalog_visibility\n";
-    csvContent += `variable,PERG-${modelMap[model]},${model} Pergola Kit | Premium Outdoor Living Space,${model.toLowerCase()}-pergola,1,0,visible\n`;
+    let csvContent = "type,sku,name,slug,parent,status,featured,catalog_visibility\n";
+    csvContent += `variable,PERG-${modelMap[model]},${model} Pergola Kit | Premium Outdoor Living Space,${model.toLowerCase()}-pergola,,1,0,visible\n`;
 
     attachedTypes.forEach(attachedType => {
         const attachedTypeCode = attachedType === 'Attached' ? 'A' : 'F';
@@ -65,7 +100,7 @@ function generateCSV() {
                         const slug = `${model.toLowerCase()}-${attachedType.toLowerCase()}-pergola-${depth}x${width}-${color.short.toLowerCase()}-${fanMount.toLowerCase()}`;
                         const sku = `PERG-${modelMap[model]}-${attachedTypeCode}-${depth}X${width}-${color.short}-${fanMount}`;
 
-                        csvContent += `variation,${sku},${name},${slug},1,0,visible\n`;
+                        csvContent += `variation,${sku},${name},${slug},${model},1,0,visible\n`;
                     });
                 });
             });
@@ -73,7 +108,7 @@ function generateCSV() {
     });
 
     // Generate CSV file for download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(blob);
     link.setAttribute('download', `${model}.csv`);
